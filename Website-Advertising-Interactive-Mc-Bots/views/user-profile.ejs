@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Profile' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>" data-profile-username="<%= profileUsername %>">
+  <%- include('partials/nav', { active: '', user }) %>
+  <main class="panel-main">
+    <a class="back-link" href="/hub">&larr; Back to home</a>
+
+    <p class="alert error hidden" id="profile-error"></p>
+
+    <div class="card" id="profile-header">
+      <div class="empty-note">Loading...</div>
+    </div>
+
+    <div class="card">
+      <h2>Threads started</h2>
+      <div class="data-list" id="profile-threads"></div>
+    </div>
+
+    <div class="card">
+      <h2>Comments on other threads</h2>
+      <div class="data-list" id="profile-comments"></div>
+    </div>
+
+    <div class="card">
+      <h2>Marketplace modules</h2>
+      <div class="data-list" id="profile-modules"></div>
+    </div>
+  </main>
+  <script src="/js/nav.js"></script>
+  <script src="/js/user-profile-page.js"></script>
+</body>
+</html>

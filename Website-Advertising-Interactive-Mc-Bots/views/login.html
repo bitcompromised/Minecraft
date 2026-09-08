@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mineflayer Web - Sign in</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235ad67d'/%3E%3Crect x='18' y='7' width='8' height='8' rx='2' fill='%230a1a0f' opacity='.55'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/login.css" />
+</head>
+<body>
+  <div class="auth-shell">
+    <a class="auth-brand" href="/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span>Mineflayer Web</span>
+    </a>
+
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to reach the forum, marketplace, and your bots.</p>
+
+      <div class="tabs">
+        <button id="tab-login" class="tab active" type="button">Log in</button>
+        <button id="tab-register" class="tab" type="button">Register</button>
+      </div>
+
+      <form id="login-form" class="auth-form">
+        <label>Username<input id="login-username" type="text" autocomplete="username" required /></label>
+        <label>Password<input id="login-password" type="password" autocomplete="current-password" required /></label>
+        <button type="submit">Log in</button>
+      </form>
+
+      <form id="register-form" class="auth-form hidden">
+        <label>Username<input id="register-username" type="text" autocomplete="username" minlength="3" maxlength="32" required /></label>
+        <label>Password<input id="register-password" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label>Confirm password<input id="register-confirm" type="password" autocomplete="new-password" minlength="8" required /></label>
+        <label id="invite-label">Invite code<input id="register-invite" type="text" autocomplete="off" placeholder="Paste your invite code" /></label>
+        <p class="hint" id="invite-hint">An invite link is required to register &mdash; ask an existing member for one.</p>
+        <button type="submit">Create account</button>
+      </form>
+
+      <p id="auth-error" class="error hidden"></p>
+    </div>
+
+    <p class="auth-foot"><a href="/">&larr; Back to the homepage</a></p>
+  </div>
+
+  <script src="/js/login.js"></script>
+</body>
+</html>

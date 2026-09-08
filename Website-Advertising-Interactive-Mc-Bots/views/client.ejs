@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Client' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>">
+  <%- include('partials/nav', { active: 'client', user }) %>
+  <main class="panel-main">
+
+    <div class="page-header">
+      <div class="page-header-row">
+        <div>
+          <span class="eyebrow">Client</span>
+          <h1>Your bots</h1>
+          <p class="subtitle">
+            Spawn bots on saved servers, watch them in the 3D viewer, read and send chat, load modules,
+            and manage the profiles, servers, and proxies behind them.
+          </p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="/play">Open 3D viewer</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-bar" id="client-tabs" role="tablist">
+      <button type="button" class="active" data-tab="bots" role="tab">Running bots</button>
+      <button type="button" data-tab="profiles" role="tab">Profiles</button>
+      <button type="button" data-tab="servers" role="tab">Servers</button>
+      <button type="button" data-tab="proxies" role="tab">Proxies</button>
+    </div>
+
+    <!-- Both bots-page.js and bot-profiles-page.js render into this page, so
+         every element id either of them looks up has to exist here even when
+         its tab is hidden. Errors are surfaced per script. -->
+    <p class="alert error hidden" id="bots-error"></p>
+    <p class="alert error hidden" id="profiles-error"></p>
+
+    <!-- ==================== running bots ==================== -->
+    <section class="tab-panel active" id="tab-bots">
+      <div class="card">
+        <div class="card-header">
+          <h2>Connections</h2>
+          <div class="btn-row">
+            <span class="row-sub" id="spawn-hint"></span>
+            <button class="btn primary small" type="button" data-open-form="spawn">Spawn a bot</button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <input type="search" id="bots-search" placeholder="Search bots by name..." />
+          <button class="btn small ghost" type="button" id="bots-collapse-all">Minimise all</button>
+          <button class="btn small ghost" type="button" id="bots-expand-all">Expand all</button>
+        </div>
+        <div class="data-list" id="bots-list"></div>
+        <div class="pager-bar" id="bots-pager"></div>
+      </div>
+    </section>
+
+    <!-- ==================== profiles ==================== -->
+    <section class="tab-panel" id="tab-profiles">
+      <div class="card">
+        <div class="card-header">
+          <h2>Bot profiles</h2>
+          <div class="btn-row">
+            <span class="row-sub">Saved Minecraft identities</span>
+            <button class="btn primary small" type="button" data-open-form="new-profile">New profile</button>
+          </div>
+        </div>
+        <div class="data-list" id="profile-list"></div>
+        <div class="pager-bar" id="profile-pager"></div>
+      </div>
+    </section>
+
+    <!-- ==================== servers ==================== -->
+    <section class="tab-panel" id="tab-servers">
+      <div class="card">
+        <div class="card-header">
+          <h2>Saved servers</h2>
+          <div class="btn-row">
+            <span class="row-sub">Pick one whenever you spawn a bot</span>
+            <button class="btn primary small" type="button" data-open-form="new-server">New server</button>
+          </div>
+        </div>
+        <div class="data-list" id="server-list"></div>
+        <div class="pager-bar" id="server-pager"></div>
+      </div>
+    </section>
+
+    <!-- ==================== proxies ==================== -->
+    <section class="tab-panel" id="tab-proxies">
+      <div class="card">
+        <div class="card-header">
+          <h2>Saved proxies</h2>
+          <div class="btn-row">
+            <span class="row-sub">Optional, chosen per connection</span>
+            <button class="btn primary small" type="button" data-open-form="new-proxy">New proxy</button>
+          </div>
+        </div>
+        <div class="data-list" id="proxy-list"></div>
+        <div class="pager-bar" id="proxy-pager"></div>
+      </div>
+    </section>
+
+    <!-- ==================================================================
+         Popup forms.
+
+         These live in the document (hidden) rather than being built inside
+         each dialog, so the page scripts can keep binding to their real
+         elements and ids. client-page.js moves the chosen one into a modal
+         when its button is pressed and puts it back on close.
+         ================================================================== -->
+    <div class="form-vault hidden" id="form-vault">
+
+      <section data-form="spawn" data-form-title="Spawn a bot">
+        <p class="alert error hidden" id="spawn-error"></p>
+        <p class="alert success hidden" id="spawn-success"></p>
+        <form id="spawn-form" class="form-grid wide">
+          <label>Bot profile
+            <select id="spawn-profile" required></select>
+          </label>
+          <label>Server
+            <select id="spawn-server" required></select>
+          </label>
+          <label>Proxy
+            <select id="spawn-proxy"></select>
+          </label>
+          <div class="btn-row">
+            <button class="btn primary" type="submit" id="spawn-btn">Spawn bot</button>
+          </div>
+        </form>
+      </section>
+
+      <section data-form="new-profile" data-form-title="New bot profile">
+        <p class="subtitle" style="margin-bottom:16px;">
+          Microsoft accounts sign in with a device code the first time &mdash; the prompt appears on the
+          bot's connection once you start it.
+        </p>
+        <form id="new-profile-form" class="form-grid wide">
+          <label>Name<input name="name" type="text" required maxlength="64" placeholder="e.g. miner_01" /></label>
+          <label>Auth
+            <select name="mcAuth">
+              <option value="microsoft">Microsoft (real account)</option>
+              <option value="offline">Offline / cracked</option>
+              <option value="mojang">Mojang (legacy)</option>
+            </select>
+          </label>
+          <label>Username / email<input name="mcUsername" type="text" required /></label>
+          <label>Version override<input name="mcVersion" type="text" placeholder="auto (or use the server's own version)" /></label>
+          <div><button class="btn primary" type="submit">Create profile</button></div>
+        </form>
+      </section>
+
+      <section data-form="new-server" data-form-title="New server">
+        <form id="new-server-form" class="form-grid wide">
+          <label>Name<input name="name" type="text" required maxlength="64" placeholder="e.g. Survival SMP" /></label>
+          <div class="form-row-inline">
+            <label>Host<input name="host" type="text" required placeholder="localhost" /></label>
+            <label>Port<input name="port" type="number" value="25565" min="1" max="65535" /></label>
+          </div>
+          <label>Version<input name="version" type="text" placeholder="auto" /></label>
+          <div><button class="btn primary" type="submit">Add server</button></div>
+        </form>
+      </section>
+
+      <section data-form="new-proxy" data-form-title="New proxy">
+        <form id="new-proxy-form" class="form-grid wide">
+          <label>Name<input name="name" type="text" required maxlength="64" /></label>
+          <label>Type
+            <select name="type">
+              <option value="socks5">SOCKS5</option>
+              <option value="socks4">SOCKS4</option>
+              <option value="http">HTTP CONNECT</option>
+            </select>
+          </label>
+          <div class="form-row-inline">
+            <label>Host<input name="host" type="text" required /></label>
+            <label>Port<input name="port" type="number" required min="1" max="65535" /></label>
+          </div>
+          <div class="form-row-inline">
+            <label>Username (optional)<input name="username" type="text" autocomplete="off" /></label>
+            <label>Password (optional)<input name="password" type="password" autocomplete="new-password" /></label>
+          </div>
+          <div><button class="btn primary" type="submit">Add proxy</button></div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/dialog.js"></script>
+  <script src="/js/paginate.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/tabs.js"></script>
+  <script src="/js/bot-profiles-page.js"></script>
+  <script src="/js/chatCommands.js"></script>
+  <script src="/js/bots-page.js"></script>
+  <script src="/js/client-page.js"></script>
+</body>
+</html>

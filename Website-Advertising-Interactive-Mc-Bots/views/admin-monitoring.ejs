@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Server Monitoring' }) %>
+</head>
+<body>
+  <%- include('partials/nav', { active: 'admin', user }) %>
+  <main class="panel-main">
+    <a class="back-link" href="/admin">&larr; Back to Admin</a>
+    <div class="page-header">
+      <span class="eyebrow">Staff</span>
+      <h1>Server monitoring</h1>
+      <p class="subtitle">Live process and OS stats, refreshed every 10 seconds.</p>
+    </div>
+
+    <p class="alert error hidden" id="monitor-error"></p>
+
+    <div class="grid-cards">
+      <div class="stat-card"><div class="stat-value" id="stat-cpu">-</div><div class="stat-label">CPU usage</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-ram">-</div><div class="stat-label">RAM usage</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-bots-running">-</div><div class="stat-label">Bots running</div></div>
+      <div class="stat-card"><div class="stat-value" id="stat-users">-</div><div class="stat-label">Total users</div></div>
+    </div>
+
+    <div class="card">
+      <h2>Disk usage</h2>
+      <div class="data-list" id="disk-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>Per-bot average (real, self-reported by each bot's own process)</h2>
+      <div class="data-list" id="bot-avg-list"></div>
+    </div>
+
+    <div class="card">
+      <h2>User credits</h2>
+      <div class="data-list" id="credit-list"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Module sales</h2>
+        <% if (roles.isAdmin(user)) { %>
+        <button class="btn small danger" type="button" id="clear-sales-btn">Clear sales data</button>
+        <% } %>
+      </div>
+      <div class="data-list" id="sales-summary-list"></div>
+      <h3 style="margin-top:14px;">By module</h3>
+      <div class="data-list" id="sales-by-module-list"></div>
+    </div>
+  </main>
+  <script src="/js/dialog.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/admin-monitoring-page.js"></script>
+</body>
+</html>

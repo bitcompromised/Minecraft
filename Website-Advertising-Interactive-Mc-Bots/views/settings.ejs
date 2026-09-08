@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Settings' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>">
+  <%- include('partials/nav', { active: '', user }) %>
+  <main class="panel-main narrow">
+
+    <div class="page-header">
+      <span class="eyebrow">Account</span>
+      <h1>Settings</h1>
+      <p class="subtitle">Your public profile, sign-in details, and invite links.</p>
+    </div>
+
+    <div class="tab-bar" id="settings-tabs" role="tablist">
+      <button type="button" class="active" data-tab="profile" role="tab">Profile</button>
+      <button type="button" data-tab="account" role="tab">Account</button>
+      <button type="button" data-tab="invites" role="tab">Invites</button>
+      <button type="button" data-tab="warnings" role="tab">
+        Warnings <span class="count hidden" id="warnings-tab-count"></span>
+      </button>
+    </div>
+
+    <p class="alert error hidden" id="settings-error"></p>
+    <p class="alert success hidden" id="settings-success"></p>
+    <p class="alert error hidden" id="invites-error"></p>
+
+    <!-- ==================== profile ==================== -->
+    <section class="tab-panel active" id="tab-profile">
+      <div class="card">
+        <div class="card-header">
+          <h2>Public profile</h2>
+          <a class="btn small ghost" href="/user/<%= encodeURIComponent(user.username) %>">View as others see it</a>
+        </div>
+        <div class="profile-hero">
+          <img id="avatar-preview" class="avatar" src="<%= user.avatarUrl || '' %>" alt="" width="72" height="72"
+            style="<%= user.avatarUrl ? '' : 'display:none;' %>" />
+          <div>
+            <div class="row-title" style="font-size:16px;">
+              <%= user.username %><%
+                if (user.status === 'vip') { %><span class="tier-badge vip">vip</span><%
+                } else if (user.status === 'mod') { %><span class="tier-badge mod">mod</span><% }
+                if (user.role === 'admin') { %><span class="admin-badge">admin</span><%
+                } else if (user.role === 'developer') { %><span class="dev-badge">dev</span><% }
+              %>
+            </div>
+            <div class="row-sub"><%= user.credits || 0 %> credits &middot; <%= user.status || 'normal' %> tier</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Profile picture</h2>
+        <p class="subtitle">PNG, JPEG, GIF, or WebP &mdash; up to 2MB.</p>
+        <form id="avatar-form" class="form-grid">
+          <label>Image<input name="avatar" type="file" accept="image/png,image/jpeg,image/gif,image/webp" required /></label>
+          <div><button class="btn primary" type="submit">Upload</button></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Bio</h2>
+        <p class="subtitle">Shown on your public profile, next to your threads and modules.</p>
+        <form id="bio-form" class="form-grid">
+          <label>About you<textarea name="bio" maxlength="500" rows="4" placeholder="What you build, which servers you run on..."><%= user.bio || '' %></textarea></label>
+          <div><button class="btn primary" type="submit">Save bio</button></div>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== account ==================== -->
+    <section class="tab-panel" id="tab-account">
+      <div class="card">
+        <h2>Account details</h2>
+        <dl class="kv-list" style="margin-top:14px;">
+          <dt>Username</dt><dd><%= user.username %></dd>
+          <dt>Role</dt><dd><%= user.role === 'developer' ? 'developer' : (user.role || 'user') %></dd>
+          <dt>Tier</dt><dd><%= user.status || 'normal' %></dd>
+          <dt>Credits</dt><dd><%= user.credits || 0 %></dd>
+        </dl>
+        <p class="subtitle" style="margin-top:14px;">Your username, role, and tier are set by an admin. Ask one if any of them needs to change.</p>
+      </div>
+
+      <div class="card">
+        <h2>Email address</h2>
+        <p class="subtitle">
+          Optional, and only used as a contact address &mdash; there is no email-based password reset here,
+          so losing access to it won't lock you out of anything.
+        </p>
+        <form id="email-form" class="form-grid">
+          <label>Email
+            <input name="email" type="email" maxlength="254" placeholder="you@example.com" value="<%= user.email || '' %>" />
+            <span class="field-hint">Leave blank to remove the address on file.</span>
+          </label>
+          <div><button class="btn primary" type="submit">Save email</button></div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2>Change password</h2>
+        <p class="subtitle">There is no email-based reset &mdash; keep this somewhere safe.</p>
+        <form id="password-form" class="form-grid">
+          <label>Current password<input name="currentPassword" type="password" required autocomplete="current-password" /></label>
+          <label>New password<input name="newPassword" type="password" required minlength="8" autocomplete="new-password" /></label>
+          <label>Confirm new password<input name="confirmPassword" type="password" required minlength="8" autocomplete="new-password" /></label>
+          <div><button class="btn primary" type="submit">Update password</button></div>
+        </form>
+      </div>
+
+      <% if (roles.isModOrAdmin(user)) { %>
+      <div class="card">
+        <h2>Staff tools</h2>
+        <p class="subtitle">User moderation, cross-account bot visibility, module review, and error logs live on the <a href="/admin">Admin</a> page.</p>
+      </div>
+      <% } %>
+    </section>
+
+    <!-- ==================== invites ==================== -->
+    <section class="tab-panel" id="tab-invites">
+      <div class="grid-cards">
+        <div class="stat-card"><div class="stat-value" id="stat-quota">-</div><div class="stat-label">Quota</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-used">-</div><div class="stat-label">Used</div></div>
+        <div class="stat-card"><div class="stat-value" id="stat-remaining">-</div><div class="stat-label">Remaining</div></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Your invite links</h2>
+          <button id="btn-new-invite" class="btn primary small" type="button">Generate link</button>
+        </div>
+        <p class="subtitle">Registering a new account requires a valid invite link from an existing member.</p>
+        <div class="data-list" id="invite-list"></div>
+      </div>
+
+      <div class="card">
+        <h2>People you've invited</h2>
+        <div class="data-list" id="referral-list"></div>
+      </div>
+    </section>
+
+    <!-- ==================== warnings ==================== -->
+    <section class="tab-panel" id="tab-warnings">
+      <div class="card">
+        <div class="card-header">
+          <h2>Warnings on your account</h2>
+          <span class="row-sub" id="warnings-summary"></span>
+        </div>
+        <p class="subtitle">
+          Warnings are issued by staff and always quote the thread, post, or module they are about.
+          Accumulating enough of them pauses, and eventually bans, an account &mdash; so read the note and
+          acknowledge it.
+        </p>
+        <div class="data-list" id="my-warnings"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/js/nav.js"></script>
+  <script src="/js/tabs.js"></script>
+  <script src="/js/settings-page.js"></script>
+  <script src="/js/invites-page.js"></script>
+</body>
+</html>

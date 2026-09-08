@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Module' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>" data-module-id="<%= moduleId %>">
+  <%- include('partials/nav', { active: 'marketplace', user }) %>
+  <main class="panel-main">
+    <a class="back-link" href="/marketplace">&larr; Back to marketplace</a>
+
+    <p class="alert error hidden" id="module-error"></p>
+    <p class="alert success hidden" id="module-success"></p>
+    <p class="alert warning hidden" id="module-at-risk-banner"></p>
+
+    <div class="page-header">
+      <span class="eyebrow">Module</span>
+      <h1 id="module-title">Loading...</h1>
+      <p class="subtitle" id="module-meta"></p>
+    </div>
+
+    <div class="card">
+      <div id="module-media"></div>
+      <p id="module-description"></p>
+      <div id="module-actions" class="btn-row" style="margin-top:16px;"></div>
+    </div>
+
+    <!-- Directly under the title/description: what you're buying and what
+         changed in it matter before reviews and discussion do. -->
+    <div class="card">
+      <h2>Changelog</h2>
+      <div class="data-list" id="module-changelog"></div>
+      <div class="pager-bar" id="module-changelog-pager"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Reviews <span id="module-rating-summary" class="row-sub"></span></h2>
+        <!-- "Write a review" / "Edit your review" - once you've left one the
+             standing form is gone, since there is only ever one per person. -->
+        <div class="btn-row" id="review-actions"></div>
+      </div>
+      <div class="data-list" id="module-reviews"></div>
+      <div class="pager-bar" id="module-reviews-pager"></div>
+      <form id="review-form" class="form-grid hidden"></form>
+      <p class="row-sub" id="review-gate-note"></p>
+    </div>
+
+    <div class="card">
+      <h2>Discussion</h2>
+      <p class="subtitle">Only purchasers can post here.</p>
+      <div class="data-list" id="module-comments"></div>
+      <div class="pager-bar" id="module-comments-pager"></div>
+      <form id="comment-form" class="form-grid wide hidden" style="margin-top:16px;">
+        <label>Comment<textarea name="body" maxlength="2000" rows="3" required></textarea></label>
+        <div><button class="btn primary" type="submit">Post comment</button></div>
+      </form>
+    </div>
+
+    <!-- Only shown to people who own the module (purchasers and the author) -
+         unhidden by module-detail-page.js once it knows. For everyone else
+         this is noise on a page they're still deciding about. -->
+    <!-- Reading the bug queue and filing into it are separate things: this
+         panel is the queue, and "Report a bug" up in the actions row opens
+         the submission dialog. -->
+    <div class="card hidden" id="bug-reports-card">
+      <div class="card-header">
+        <h2>Bug reports</h2>
+        <span class="row-sub">Visible to the module's author and to staff</span>
+      </div>
+      <div class="data-list" id="module-bug-reports"></div>
+      <div class="pager-bar" id="module-bug-reports-pager"></div>
+    </div>
+
+    <div class="card hidden" id="transactions-card">
+      <h2>Transaction history</h2>
+      <p class="row-sub" id="earnings-summary"></p>
+      <div class="data-list" id="module-transactions"></div>
+    </div>
+
+    <div class="card hidden" id="manage-card">
+      <h2>Manage</h2>
+      <p class="subtitle">Only the module owner can do this.</p>
+
+      <h3>Media (up to 3 images/videos)</h3>
+      <form id="media-form" class="btn-row" enctype="multipart/form-data" style="margin-bottom:14px;">
+        <input name="media" type="file" accept="image/png,image/jpeg,image/gif,image/webp,video/mp4,video/webm" required style="max-width:340px;" />
+        <button class="btn small" type="submit">Upload media</button>
+      </form>
+
+      <h3>Submit an update</h3>
+      <p class="subtitle">
+        The code box starts from the version that is live now &mdash; edit it and submit. The update is
+        reviewed before it replaces what your users are running.
+      </p>
+      <form id="update-form" class="form-grid wide">
+        <label>New version<input name="version" type="text" required maxlength="32" placeholder="e.g. 1.1.0" /></label>
+        <label>Changelog notes<textarea name="changelogNotes" maxlength="2000" rows="3"></textarea></label>
+
+        <div class="code-field">
+          <label for="update-source">Module code</label>
+          <textarea id="update-source" name="source" class="code-input"
+            spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"
+            wrap="off" required></textarea>
+          <div class="code-field-foot">
+            <span class="line-count">0 lines</span>
+            <button class="btn ghost small" type="button" data-reload-source>Reload current version</button>
+          </div>
+        </div>
+
+        <div><button class="btn primary" type="submit">Submit for review</button></div>
+      </form>
+
+      <h3 style="margin-top:18px;">Marketplace visibility</h3>
+      <p class="subtitle">
+        A private module disappears from the browse list and can't be bought. Everyone who already owns it
+        keeps it and can still load it onto a bot.
+      </p>
+      <div id="visibility-controls"></div>
+
+      <h3 style="margin-top:18px;">At risk</h3>
+      <p class="subtitle">Flag this module as having a known security/abuse concern - shows a warning to everyone.</p>
+      <div id="at-risk-controls"></div>
+    </div>
+
+    <div class="card hidden" id="moderation-card">
+      <h2>Moderation</h2>
+
+      <h3>Update submissions</h3>
+      <div class="data-list" id="update-list"></div>
+
+      <% if (roles.isAdmin(user)) { %>
+      <h3 style="margin-top:18px;">Admin actions</h3>
+      <div class="btn-row">
+        <button class="btn danger" id="delete-module-btn" type="button">Remove module permanently</button>
+      </div>
+      <div id="admin-at-risk-controls" style="margin-top:10px;"></div>
+      <% } %>
+    </div>
+  </main>
+
+  <div class="modal hidden" id="source-modal">
+    <div class="modal-box wide">
+      <h2 id="source-modal-title">Module source</h2>
+      <pre class="code-view" id="source-modal-code"></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="source-modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal hidden" id="diff-modal">
+    <div class="modal-box wide">
+      <h2>Changes in this update</h2>
+      <pre class="code-view" id="diff-modal-code"></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="diff-modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/dialog.js"></script>
+  <script src="/js/paginate.js"></script>
+  <script src="/js/moduleTemplate.js"></script>
+  <script src="/js/code-input.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/module-detail-page.js"></script>
+</body>
+</html>

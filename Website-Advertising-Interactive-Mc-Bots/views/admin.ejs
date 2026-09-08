@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Admin' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>">
+  <%- include('partials/nav', { active: 'admin', user }) %>
+  <main class="panel-main">
+    <div class="page-header">
+      <div class="page-header-row">
+        <div>
+          <span class="eyebrow">Staff</span>
+          <h1>Admin</h1>
+          <p class="subtitle">
+            Every section below is collapsed by default &mdash; open the ones you need. Which are open is
+            remembered on this device.
+          </p>
+        </div>
+        <% if (roles.isStaff(user)) { %>
+        <div class="btn-row">
+          <a class="btn" href="/admin/monitoring">Server monitoring</a>
+        </div>
+        <% } %>
+      </div>
+    </div>
+
+    <p class="alert error hidden" id="admin-error"></p>
+    <p class="alert success hidden" id="admin-success"></p>
+
+    <div class="admin-tools-bar">
+      <button class="btn small ghost" id="expand-all" type="button">Expand all</button>
+      <button class="btn small ghost" id="collapse-all" type="button">Collapse all</button>
+    </div>
+
+    <!-- Each section is a .card.collapsible; admin-page.js wires the header
+         button, remembers open/closed per section, and only loads a
+         section's data the first time it's opened. -->
+
+    <section class="card collapsible" data-section="users">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Users</h2>
+          <span class="head-meta">Credits, tiers, roles, moderation, and password resets</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="users-search" placeholder="Search username or email..." /></div>
+        <div class="data-list" id="user-cards"></div>
+        <div class="pager-bar" id="users-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="module-reports">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Module reports</h2>
+          <span class="head-meta">Open reports filed against marketplace modules</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="module-reports-search" placeholder="Search module, reporter, or reason..." /></div>
+        <div class="data-list" id="module-reports-list"></div>
+        <div class="pager-bar" id="module-reports-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="forum-reports">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Forum reports</h2>
+          <span class="head-meta">Threads and posts users have reported to staff</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="forum-reports-search" placeholder="Search thread, author, reporter, or reason..." /></div>
+        <div class="data-list" id="forum-reports-list"></div>
+        <div class="pager-bar" id="forum-reports-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="warnings">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Warnings issued</h2>
+          <span class="head-meta">Every warning staff have issued, and what it cited</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="warnings-search" placeholder="Search user, issuer, or note..." /></div>
+        <div class="data-list" id="warnings-list"></div>
+        <div class="pager-bar" id="warnings-pager"></div>
+      </div>
+    </section>
+
+    <% if (roles.isStaff(user)) { %>
+    <section class="card collapsible" data-section="bot-profiles">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Bot profiles (all users)</h2>
+          <span class="head-meta">Every profile on the server and its live status</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar">
+          <input type="search" id="bot-profiles-search" placeholder="Search name, owner, or username..." />
+          <select id="bot-profiles-status-filter">
+            <option value="">All statuses</option>
+            <option value="online">Online</option>
+            <option value="offline">Offline</option>
+            <option value="connecting">Connecting</option>
+            <option value="error">Error</option>
+          </select>
+        </div>
+        <div class="data-list" id="admin-bot-list"></div>
+        <div class="pager-bar" id="bot-profiles-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="logs">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Error logs</h2>
+          <span class="head-meta">Connection and module errors across every account</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="logs-search" placeholder="Search message, username, or bot..." /></div>
+        <div class="data-list" id="admin-log-list"></div>
+        <div class="pager-bar" id="logs-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="audit-log">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Admin audit log</h2>
+          <span class="head-meta">Every staff action taken from this page, and by whom</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="audit-log-search" placeholder="Search actor, action, or details..." /></div>
+        <div class="data-list" id="audit-log-list"></div>
+        <div class="pager-bar" id="audit-log-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="messages">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Private messages</h2>
+          <span class="head-meta">Every private message ever sent</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="search-bar"><input type="search" id="dm-search" placeholder="Search sender, recipient, or message text..." /></div>
+        <div class="data-list" id="dm-list"></div>
+        <div class="pager-bar" id="dm-pager"></div>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="settings">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Website settings</h2>
+          <span class="head-meta">Registration, maintenance, economy, bot limits, and warning thresholds</span>
+        </span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <div class="alert warning">
+          <strong>Switching maintenance mode on stops bots.</strong> Every running connection that isn't owned by
+          an admin or a developer is disconnected the moment you save, and those users can't create profiles or
+          start bots again until you switch it back off. Staff bots keep running.
+        </div>
+
+        <form id="settings-form" class="form-grid wide">
+          <label>Site name
+            <input name="siteName" type="text" maxlength="60" placeholder="Mineflayer Web" />
+            <span class="field-hint">Shown in the browser tab, on the public landing page, and in the footer.</span>
+          </label>
+
+          <h3>Registration</h3>
+
+          <label><input name="registrationOpen" type="checkbox" /> Registration open (new accounts can sign up)</label>
+          <label><input name="invitelessRegistration" type="checkbox" /> Allow sign-up without an invite code</label>
+          <p class="field-hint" style="margin-top:-6px;">
+            With this off, every new account needs a valid invite link. With it on, invites still work and still
+            record who referred whom &mdash; they just stop being required.
+          </p>
+
+          <label>Starting credits
+            <input name="startingCredits" type="number" min="0" max="100000" />
+            <span class="field-hint">Granted once, when an account is created.</span>
+          </label>
+
+          <label>Starting invites
+            <input name="startingInvites" type="number" min="0" max="1000" placeholder="Leave blank for the tier default" />
+            <span class="field-hint">Overrides the per-tier invite quota for new accounts. Blank keeps the default.</span>
+          </label>
+
+          <h3>Maintenance &amp; announcements</h3>
+
+          <label><input name="maintenanceMode" type="checkbox" /> Maintenance mode (banner for everyone, and bots stop &mdash; see above)</label>
+
+          <label>Maintenance message
+            <input name="maintenanceMessage" type="text" maxlength="500" placeholder="Back in about an hour - upgrading the database." />
+            <span class="field-hint">Shown in the maintenance banner, and to anyone who tries to start a bot while it's on.</span>
+          </label>
+
+          <label>Announcement banner
+            <input name="announcementBanner" type="text" maxlength="500" placeholder="New module API docs are up!" />
+            <span class="field-hint">Shown to everyone, independent of maintenance mode. Leave blank to hide it.</span>
+          </label>
+
+          <h3>Bot limits</h3>
+          <p class="field-hint" style="margin-top:-6px;">
+            Maximum connections a user can run at once, per tier. Blank falls back to the server's
+            environment defaults. Admins and developers are always unlimited.
+          </p>
+
+          <div class="form-row-inline">
+            <label>Normal<input name="botLimitNormal" type="number" min="0" max="1000" placeholder="default" /></label>
+            <label>VIP<input name="botLimitVip" type="number" min="0" max="1000" placeholder="default" /></label>
+            <label>Mod<input name="botLimitMod" type="number" min="0" max="1000" placeholder="default" /></label>
+          </div>
+
+          <h3>Warnings</h3>
+          <p class="field-hint" style="margin-top:-6px;">
+            Automatic consequences once a user reaches this many active (non-revoked) warnings. Set either
+            threshold to 0 to disable that step.
+          </p>
+
+          <div class="form-row-inline">
+            <label>Warnings before auto-pause<input name="warnThresholdPause" type="number" min="0" max="100" /></label>
+            <label>Warnings before auto-ban<input name="warnThresholdBan" type="number" min="0" max="100" /></label>
+            <label>Auto-ban length (hours)<input name="warnBanDurationHours" type="number" min="0" max="87600" /></label>
+          </div>
+
+          <h3>Marketplace</h3>
+
+          <label>Marketplace payout rate
+            <input name="marketplacePayoutRate" type="number" min="0" max="1" step="0.01" />
+            <span class="field-hint">Fraction of each sale paid to the module's uploader, between 0 and 1.</span>
+          </label>
+
+          <div><button class="btn primary" type="submit">Save settings</button></div>
+        </form>
+      </div>
+    </section>
+
+    <section class="card collapsible" data-section="import-whitelist">
+      <button class="collapsible-head" type="button" aria-expanded="false">
+        <span class="head-text">
+          <h2>Module sandbox import allowlist</h2>
+          <span class="head-meta">What a sandboxed module's require() may resolve</span>
+        </span>
+        <span class="head-count hidden" data-count></span>
+        <span class="chevron" aria-hidden="true"></span>
+      </button>
+      <div class="collapsible-body">
+        <p class="subtitle">
+          Node builtins and npm package names a marketplace module's require()/import can resolve inside its
+          sandbox (see <a href="/marketplace/api">Module API</a>). Adding something like <code>fs</code> or
+          <code>child_process</code> gives every loaded module that access - only add what you understand.
+        </p>
+        <div class="data-list" id="import-whitelist-list"></div>
+        <form id="import-whitelist-form" class="form-grid" style="margin-top:16px;">
+          <label>Package or builtin name
+            <input name="name" type="text" required maxlength="100" placeholder="e.g. minecraft-data" />
+            <span class="field-hint">An npm package already installed in this project, or a Node builtin. No spaces or semicolons.</span>
+          </label>
+          <div><button class="btn primary" type="submit">Allow</button></div>
+        </form>
+      </div>
+    </section>
+    <% } %>
+  </main>
+  <script src="/js/dialog.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/admin-page.js"></script>
+</body>
+</html>

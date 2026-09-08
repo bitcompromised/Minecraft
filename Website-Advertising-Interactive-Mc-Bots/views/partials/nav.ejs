@@ -1,0 +1,86 @@
+<%
+  // Only the four primary destinations live in the top bar now - everything
+  // personal (profile, settings, invites, FAQ, admin) moved into the user
+  // menu on the right, so the bar stays readable on a laptop width.
+  const canSeeAdmin = roles.isModOrAdmin(user)
+%>
+<nav class="panel-nav">
+  <button class="nav-toggle" id="nav-toggle" type="button" aria-label="Toggle navigation" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+
+  <a class="nav-brand" href="/hub">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span>Mineflayer Web</span>
+  </a>
+
+  <div class="nav-links" id="nav-links">
+    <a href="/hub" class="<%= active === 'hub' ? 'active' : '' %>">Home</a>
+    <a href="/forum" class="<%= active === 'forum' ? 'active' : '' %>">Forum</a>
+    <a href="/marketplace" class="<%= active === 'marketplace' ? 'active' : '' %>">Marketplace</a>
+    <a href="/client" class="<%= active === 'client' ? 'active' : '' %>">Client</a>
+    <a href="/messages" class="<%= active === 'messages' ? 'active' : '' %>">
+      Messages <span id="nav-unread-badge" class="badge error hidden"></span>
+    </a>
+  </div>
+
+  <div class="nav-right">
+    <span class="nav-credits" title="Marketplace credits">
+      <span aria-hidden="true">&#9670;</span><%= user.credits || 0 %>
+    </span>
+
+    <div class="nav-user" id="nav-notifications">
+      <button class="nav-bell" id="nav-bell-btn" type="button" aria-haspopup="true" aria-expanded="false" title="Notifications">
+        <span aria-hidden="true">&#128276;</span>
+        <span class="dot hidden" id="nav-bell-count"></span>
+      </button>
+      <div class="notif-menu hidden" id="notif-menu" role="menu">
+        <div class="notif-menu-head">
+          <span class="title">Notifications</span>
+          <button type="button" id="notif-mark-all">Mark all read</button>
+        </div>
+        <div id="notif-list">
+          <div class="empty-note">Loading...</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-user" id="nav-user">
+      <button class="nav-user-btn" id="nav-user-btn" type="button" aria-haspopup="true" aria-expanded="false">
+        <% if (user.avatarUrl) { %>
+        <img class="nav-avatar" src="<%= user.avatarUrl %>" alt="" width="28" height="28" />
+        <% } else { %>
+        <span class="avatar-fallback" aria-hidden="true"><%= user.username.slice(0, 2) %></span>
+        <% } %>
+        <span class="caret" aria-hidden="true"></span>
+      </button>
+
+      <div class="nav-menu hidden" id="nav-menu" role="menu">
+        <div class="nav-menu-head">
+          <div class="name">
+            <%= user.username %><%
+              if (user.status === 'vip') { %><span class="tier-badge vip">vip</span><%
+              } else if (user.status === 'mod') { %><span class="tier-badge mod">mod</span><% }
+              if (user.role === 'admin') { %><span class="admin-badge">admin</span><%
+              } else if (user.role === 'developer') { %><span class="dev-badge">dev</span><% }
+            %>
+          </div>
+          <div class="meta"><%= user.credits || 0 %> credits &middot; <%= user.status || 'normal' %> tier</div>
+        </div>
+
+        <a href="/user/<%= encodeURIComponent(user.username) %>" role="menuitem">Your profile</a>
+        <a href="/settings" role="menuitem">Settings</a>
+        <a href="/settings#invites" role="menuitem">Invites</a>
+        <a href="/play" role="menuitem">3D viewer</a>
+        <div class="sep"></div>
+        <a href="/marketplace/api" role="menuitem">Module API docs</a>
+        <a href="/faq" role="menuitem">FAQ</a>
+        <% if (canSeeAdmin) { %>
+        <a href="/admin" role="menuitem">Admin</a>
+        <% } %>
+        <div class="sep"></div>
+        <button id="nav-logout-btn" class="danger-item" type="button" role="menuitem">Log out</button>
+      </div>
+    </div>
+  </div>
+</nav>

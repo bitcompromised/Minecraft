@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Messages' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>">
+  <%- include('partials/nav', { active: 'messages', user }) %>
+  <main class="panel-main">
+
+    <div class="page-header">
+      <span class="eyebrow">Inbox</span>
+      <h1>Messages</h1>
+      <p class="subtitle">Private conversations with other members.</p>
+    </div>
+
+    <p class="alert error hidden" id="messages-error"></p>
+
+    <div class="split" id="messages-layout">
+      <div>
+        <div class="card">
+          <h2 id="thread-title">Select a conversation</h2>
+          <div class="data-list" id="thread-messages"></div>
+          <form id="thread-reply-form" class="form-grid wide hidden" style="margin-top:16px;">
+            <label>Reply<textarea name="body" maxlength="4000" rows="4" required></textarea></label>
+            <div><button class="btn primary" type="submit">Send reply</button></div>
+          </form>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Conversations</h2>
+          <div class="data-list" id="conversation-list"></div>
+        </div>
+
+        <div class="card">
+          <h2>New message</h2>
+          <form id="new-message-form" class="form-grid wide">
+            <label>To (username)<input name="to" id="new-message-to" required maxlength="32" /></label>
+            <label>Message<textarea name="body" maxlength="4000" rows="4" required></textarea></label>
+            <div><button class="btn primary" type="submit">Send</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/js/nav.js"></script>
+  <script src="/js/messages-page.js"></script>
+</body>
+</html>

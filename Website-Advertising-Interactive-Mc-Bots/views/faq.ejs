@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'FAQ' }) %>
+</head>
+<body>
+  <%- include('partials/nav', { active: '', user }) %>
+  <main class="panel-main narrow">
+
+    <div class="page-header">
+      <span class="eyebrow">Help</span>
+      <h1>Frequently asked questions</h1>
+      <p class="subtitle">The things that trip people up most often.</p>
+    </div>
+
+    <div class="card">
+      <div class="faq-item">
+        <h3>How do I connect a bot to a Minecraft server?</h3>
+        <p>On the <a href="/client">Client</a> page, create a profile on the Profiles tab and a server on the
+        Servers tab, then use the "Spawn a bot" composer on the Running bots tab. For Microsoft auth, a
+        device-code sign-in prompt appears on the connection itself the first time.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Why is my bot's status stuck on "connecting" or "error"?</h3>
+        <p>Open the connection on the <a href="/client">Client</a> page &mdash; the status line includes the
+        underlying error (wrong host/port, server offline, version mismatch, proxy failure, and so on), and
+        "Show logs" has the full lifecycle. Setting an explicit version instead of "auto" often resolves
+        version-mismatch errors.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Can one profile run on more than one server?</h3>
+        <p>Yes. Each profile can hold connections to several saved servers at once, each with its own status,
+        modules, logs, and chat. Use "Start on another server" on the profile's row.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How do I talk to people through my bot?</h3>
+        <p>Every running connection on the <a href="/client">Client</a> page has a "Show chat" console: it
+        streams the server's chat live and sends messages back out as that bot. You can also chat from inside
+        the <a href="/play">3D viewer</a>.</p>
+      </div>
+      <div class="faq-item">
+        <h3>What are proxies for?</h3>
+        <p>Assigning a SOCKS5, SOCKS4, or HTTP-CONNECT proxy routes that connection to the Minecraft server
+        through it. Save proxies on the Proxies tab of the <a href="/client">Client</a> page and pick one each
+        time you spawn a bot.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Where do marketplace credits come from?</h3>
+        <p>Admins grant them, and selling a module earns them &mdash; uploaders receive a configurable share of
+        every purchase of their work.</p>
+      </div>
+      <div class="faq-item">
+        <h3>Is it safe to load someone else's module?</h3>
+        <p>Modules run in a dedicated worker thread with no live access to the bot object and only an
+        admin-approved import allowlist, which gives real crash and memory isolation &mdash; but approval means a
+        human read the source, not that it's guaranteed safe. See the <a href="/marketplace/api">Module API</a>
+        page, and only load modules from people you trust.</p>
+      </div>
+      <div class="faq-item">
+        <h3>I ran out of invites &mdash; what now?</h3>
+        <p>Each account has a limited quota, shown on the <a href="/settings#invites">Invites</a> tab in
+        Settings. Ask an admin to raise it.</p>
+      </div>
+      <div class="faq-item">
+        <h3>How do I change my password?</h3>
+        <p>Go to <a href="/settings#account">Settings &rarr; Account</a>. There is no email-based reset &mdash;
+        if you're fully locked out, an admin will need to help via server access.</p>
+      </div>
+    </div>
+  </main>
+  <script src="/js/nav.js"></script>
+</body>
+</html>

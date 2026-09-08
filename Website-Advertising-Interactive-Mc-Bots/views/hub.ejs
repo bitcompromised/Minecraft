@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Home' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>">
+  <%- include('partials/nav', { active: 'hub', user }) %>
+  <main class="panel-main">
+
+    <div class="page-header">
+      <div class="page-header-row">
+        <div>
+          <span class="eyebrow">Community</span>
+          <h1>Welcome back, <%= user.username %></h1>
+          <p class="subtitle">The forum and module marketplace, side by side. Your bots live on the <a href="/client">Client</a> page.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="/marketplace">Browse marketplace</a>
+          <a class="btn primary" href="/client">Open client</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-cards">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-running">-</div>
+        <div class="stat-label">Bots running</div>
+        <div class="stat-hint" id="stat-profiles">&nbsp;</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-owned">-</div>
+        <div class="stat-label">Modules owned</div>
+        <div class="stat-hint" id="stat-uploads">&nbsp;</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value"><%= user.credits || 0 %></div>
+        <div class="stat-label">Credits</div>
+        <div class="stat-hint" id="stat-earned">&nbsp;</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-invites">-</div>
+        <div class="stat-label">Invites left</div>
+        <div class="stat-hint"><a href="/settings#invites">Manage invites</a></div>
+      </div>
+    </div>
+
+    <p class="alert error hidden" id="hub-error"></p>
+
+    <div class="split">
+      <!-- ---------------- forum ---------------- -->
+      <div>
+        <div class="card flush">
+          <div class="card-header">
+            <h2>Latest discussion</h2>
+            <a class="link-more" href="/forum">Open forum &rarr;</a>
+          </div>
+          <div class="card-body">
+            <div class="search-bar" id="hub-sections">
+              <button type="button" class="btn small section-btn active" data-section="discussion">Discussion</button>
+              <button type="button" class="btn small section-btn" data-section="marketplace">Marketplace</button>
+              <button type="button" class="btn small section-btn" data-section="reviews">Reviews</button>
+              <button type="button" class="btn small section-btn" data-section="bugs">Bugs</button>
+              <% if (roles.isModOrAdmin(user)) { %>
+              <button type="button" class="btn small section-btn" data-section="admin">Admin</button>
+              <% } %>
+            </div>
+            <div class="data-list" id="hub-threads">
+              <div class="empty-note">Loading threads...</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Newest modules</h2>
+            <a class="link-more" href="/marketplace">See all &rarr;</a>
+          </div>
+          <div class="data-list" id="hub-new-modules">
+            <div class="empty-note">Loading modules...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------------- sidebar ---------------- -->
+      <div>
+        <div class="card">
+          <h2>Top rated</h2>
+          <p class="subtitle">Highest-rated approved modules right now.</p>
+          <div class="data-list" id="hub-top-modules">
+            <div class="empty-note">Loading...</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Your uploads</h2>
+          <div class="data-list" id="hub-my-modules">
+            <div class="empty-note">Loading...</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Jump to</h2>
+          <div class="data-list">
+            <div class="data-row">
+              <div class="row-main">
+                <div class="row-title">Client</div>
+                <div class="row-sub">Spawn bots, watch them, chat, manage servers and proxies</div>
+              </div>
+              <a class="btn small" href="/client">Open</a>
+            </div>
+            <div class="data-row">
+              <div class="row-main">
+                <div class="row-title">3D viewer</div>
+                <div class="row-sub">Play as any running bot in a live world view</div>
+              </div>
+              <a class="btn small" href="/play">Open</a>
+            </div>
+            <div class="data-row">
+              <div class="row-main">
+                <div class="row-title">Module API</div>
+                <div class="row-sub">What a sandboxed module can do before you upload one</div>
+              </div>
+              <a class="btn small" href="/marketplace/api">Read</a>
+            </div>
+            <div class="data-row">
+              <div class="row-main">
+                <div class="row-title">Settings</div>
+                <div class="row-sub">Profile, avatar, password, and invite links</div>
+              </div>
+              <a class="btn small" href="/settings">Open</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="/js/nav.js"></script>
+  <script src="/js/hub-page.js"></script>
+</body>
+</html>

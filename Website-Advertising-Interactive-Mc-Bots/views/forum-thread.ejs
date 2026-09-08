@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Thread' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>" data-thread-id="<%= threadId %>">
+  <%- include('partials/nav', { active: 'forum', user }) %>
+  <main class="panel-main narrow">
+    <a class="back-link" href="/forum">&larr; Back to forum</a>
+    <div class="page-header">
+      <h1 id="thread-title">Loading...</h1>
+      <p class="subtitle" id="thread-meta"></p>
+    </div>
+
+    <p class="alert error hidden" id="thread-error"></p>
+
+    <div class="card">
+      <div class="data-list" id="post-list"></div>
+      <div class="pager-bar" id="post-pager"></div>
+    </div>
+
+    <div class="card" id="reply-card">
+      <h2>Reply</h2>
+      <form id="reply-form" class="form-grid">
+        <label>Message<textarea name="body" required maxlength="5000"></textarea></label>
+        <div><button class="btn primary" type="submit">Reply</button></div>
+      </form>
+    </div>
+  </main>
+  <script src="/js/dialog.js"></script>
+  <script src="/js/paginate.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/forum-thread-page.js"></script>
+</body>
+</html>

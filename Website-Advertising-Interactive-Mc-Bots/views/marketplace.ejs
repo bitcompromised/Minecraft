@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Marketplace' }) %>
+</head>
+<body data-role="<%= user.role %>">
+  <%- include('partials/nav', { active: 'marketplace', user }) %>
+  <main class="panel-main">
+
+    <div class="page-header">
+      <div class="page-header-row">
+        <div>
+          <span class="eyebrow">Modules</span>
+          <h1>Marketplace</h1>
+          <p class="subtitle">Buy and sell bot modules for credits. Read the <a href="/marketplace/api">Module API</a> docs before uploading.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="/marketplace/api">Module API</a>
+          <button class="btn primary" type="button" data-open-form="upload">Upload a module</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert warning">
+      <strong>Modules run in an isolated sandbox</strong> &mdash; their own worker thread, no live access to the bot
+      object, and only admin-approved imports. That's real crash and memory isolation, but not a hard security
+      boundary: approval means a human reviewed the source, not that it's guaranteed safe. See the
+      <a href="/marketplace/api">Module API</a> page for details, and only load modules from people you trust.
+    </div>
+
+    <p class="alert error hidden" id="market-error"></p>
+    <p class="alert success hidden" id="market-success"></p>
+
+    <!-- Demo modules are no longer a separate panel: they're pinned to the
+         top of this list server-side, so a new user trips over them without
+         having to know they exist. -->
+    <div class="card">
+      <div class="card-header">
+        <h2>Available modules</h2>
+        <span class="row-sub">Demos are pinned to the top &mdash; free, and readable by anyone</span>
+      </div>
+      <div class="search-bar">
+        <input type="search" id="approved-search" placeholder="Search name, description, or author..." />
+        <select id="approved-sort" title="Order the list">
+          <option value="discussion">Most recent discussion</option>
+          <option value="updated">Recently updated</option>
+          <option value="created">Recently created</option>
+        </select>
+      </div>
+      <div class="data-list" id="approved-list"></div>
+      <div class="pager-bar" id="approved-pager"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Your uploads</h2>
+        <span class="row-sub" id="earnings-summary"></span>
+      </div>
+      <div class="data-list" id="mine-list"></div>
+    </div>
+
+    <div class="card" id="admin-review-card" style="display:none;">
+      <div class="card-header">
+        <h2>Pending review</h2>
+        <span class="badge pending">admin / mod</span>
+      </div>
+      <div class="data-list" id="pending-list"></div>
+    </div>
+
+    <!-- Opened as a dialog by the "Upload a module" button in the header.
+         It stays in the document (hidden) so the file input and the submit
+         handler bound to it keep working - see Dialog.openPanel. -->
+    <div class="form-vault hidden" id="form-vault">
+      <section data-form="upload" data-form-title="Upload a module">
+        <p class="subtitle" style="margin-bottom:16px;">
+          Write or paste the module below. It is checked for syntax errors and for a valid
+          <code>module.exports</code> before it is accepted, then stays hidden until an admin or mod
+          approves it. See the <a href="/marketplace/api">Module API</a> for what the sandbox provides.
+        </p>
+        <form id="upload-form" class="form-grid wide">
+          <label>Name<input name="name" type="text" required maxlength="64" /></label>
+          <label>Description<textarea name="description" maxlength="2000" rows="4"></textarea></label>
+          <label>Price (credits)<input name="price" type="number" min="0" value="0" required /></label>
+
+          <div class="code-field">
+            <label for="upload-source">Module code</label>
+            <textarea id="upload-source" name="source" class="code-input" data-template
+              spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off"
+              wrap="off" required></textarea>
+            <div class="code-field-foot">
+              <span class="line-count">0 lines</span>
+              <button class="btn ghost small" type="button" data-reset-template>Reset to template</button>
+            </div>
+          </div>
+
+          <div><button class="btn primary" type="submit">Upload for review</button></div>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <div class="modal hidden" id="source-modal">
+    <div class="modal-box wide">
+      <h2 id="source-modal-title">Module source</h2>
+      <pre class="code-view" id="source-modal-code"></pre>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="source-modal-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/dialog.js"></script>
+  <script src="/js/moduleTemplate.js"></script>
+  <script src="/js/code-input.js"></script>
+  <script src="/js/nav.js"></script>
+  <script src="/js/marketplace-page.js"></script>
+</body>
+</html>

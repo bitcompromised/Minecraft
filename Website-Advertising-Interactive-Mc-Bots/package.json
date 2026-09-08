@@ -1,0 +1,35 @@
+{
+  "name": "mineflayer-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Mineflayer bot with a browser-based control panel and 3D viewer",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "canvas": "^3.2.3",
+    "connect-mongo": "^6.0.0",
+    "dotenv": "^16.4.5",
+    "ejs": "^6.0.1",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "minecraft-data": "^3.65.0",
+    "mineflayer": "^4.20.1",
+    "mineflayer-pathfinder": "^2.4.5",
+    "mongodb": "^7.5.0",
+    "multer": "^2.2.0",
+    "prismarine-viewer": "^1.17.0",
+    "socket.io": "^4.7.5",
+    "socks": "^2.8.9",
+    "vec3": "^0.1.8"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

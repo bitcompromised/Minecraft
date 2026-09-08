@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Module API' }) %>
+</head>
+<body>
+  <%- include('partials/nav', { active: 'marketplace', user }) %>
+  <main class="panel-main narrow">
+    <a class="back-link" href="/marketplace">&larr; Back to marketplace</a>
+    <div class="page-header">
+      <span class="eyebrow">Docs</span>
+      <h1>Module API</h1>
+      <p class="subtitle">What a marketplace module is, and what it can do once loaded onto a bot.</p>
+    </div>
+
+    <div class="alert warning">
+      Modules run inside their own <strong>worker_thread sandbox</strong> - no live reference to the bot object,
+      and <code>require()</code>/<code>import</code> is restricted to an admin-controlled allowlist (see the
+      Admin page). This is real crash/memory isolation and enforced import control, but worker_threads still
+      share this server's process, so it is <strong>not a hard security boundary</strong>. Admin approval is
+      still a human code review, not a guarantee - only upload code you trust, and as an admin, only approve
+      code you have actually read and understood.
+    </div>
+
+    <div class="card">
+      <h2>Module contract</h2>
+      <p>A module is a single <code>.js</code> file that exports an object with lifecycle hooks:</p>
+      <pre class="code-view">module.exports = {
+  name: 'Auto Announcer',
+
+  // Called once when a user loads this module onto one of their running bots.
+  async onLoad(bot, api) {
+    api.log('Auto Announcer is online.')
+    this._interval = setInterval(async () => {
+      await bot.chat('Hello from a marketplace module!')
+    }, 60000)
+  },
+
+  // Called when the module is unloaded, or the bot disconnects. Clean up
+  // timers/listeners you registered in onLoad here.
+  async onUnload(bot, api) {
+    clearInterval(this._interval)
+    api.log('Auto Announcer stopped.')
+  },
+}</pre>
+    </div>
+
+    <div class="card">
+      <h2>Declaring commands</h2>
+      <p>
+        A module that answers to chat commands can say so, by exporting a <code>commands</code> array. It is
+        read once, straight after <code>onLoad</code> returns - so it can be built while the module starts up -
+        and two things use it:
+      </p>
+      <ul>
+        <li>
+          the chat box on the <a href="/play">Play</a> page completes against it, showing each command and
+          subcommand with its description as you type;
+        </li>
+        <li>
+          the bot uses it to tell a module command apart from a real server command. A line matching something
+          declared here is handed to the loaded modules and <strong>not</strong> forwarded to the Minecraft
+          server, so it draws no "Unknown command" reply.
+        </li>
+      </ul>
+      <pre class="code-view">module.exports = {
+  name: 'Auto Announcer',
+
+  commands: [{
+    name: 'announce',              // typed as /announce
+    aliases: ['ann'],              // optional
+    usage: '/announce',
+    description: 'Repeat a line on a timer.',
+    subcommands: [
+      { name: 'on',  usage: '/announce on',          description: 'Start announcing.' },
+      { name: 'add', usage: '/announce add &lt;text&gt;',  description: 'Add a line to the rotation.' },
+    ],
+  }],
+
+  async onLoad(bot, api) { /* ... */ },
+}</pre>
+      <p>
+        Declaring a command does not implement it. Handling still happens in your own listener - the commands
+        themselves arrive on <code>chat</code> (from <code>@panel</code>, when typed in the panel) and on
+        <code>whisper</code> (when someone messages the bot in game), exactly as before.
+      </p>
+      <p>
+        Names are lowercased, limited to letters, digits, <code>-</code> and <code>_</code>, and de-duplicated;
+        text is trimmed and truncated. Anything that does not fit is dropped rather than shown, so a malformed
+        entry costs you that entry and nothing else.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Parameters</h2>
+      <h3><code>bot</code></h3>
+      <p>
+        A sandboxed proxy for the <a href="https://github.com/PrismarineJS/mineflayer/blob/master/docs/api.md" target="_blank" rel="noopener">mineflayer</a>
+        bot instance, not the live object - every property read and method call crosses into the bot's own
+        process and back, so <strong>everything on <code>bot</code> is a Promise now, even plain property
+        reads</strong>: write <code>await bot.entity.position</code>, not <code>bot.entity.position</code>.
+        Rich objects (positions, blocks, entities, items) also arrive as plain data, not live class instances -
+        methods like a position's <code>.offset()</code> won't be there, just the underlying <code>x</code>/
+        <code>y</code>/<code>z</code> fields.
+      </p>
+      <p>
+        Going the other way, a plain <code>{ x, y, z }</code> object passed as an argument is rebuilt into a
+        real position before mineflayer sees it, so <code>await bot.blockAt(pos)</code> and
+        <code>await bot.lookAt(point)</code> work with the data you were handed. Functions are the exception -
+        they can never cross - so anything taking a callback needs another form:
+        <code>bot.findBlocks({ matching })</code> takes an array of block ids rather than a matcher, and block
+        ids can be read straight off <code>bot.registry.blocksByName</code>.
+      </p>
+      <h3><code>api.log(message)</code></h3>
+      <p>
+        Convenience helper that posts a system-style line into that bot's in-game chat log, visible on the
+        <a href="/play">Play</a> page. This is the easiest way to surface module output to whoever is
+        watching - it is not required, just a shortcut. Anything your module sends to <code>console.log</code>/
+        <code>console.error</code> etc. is also captured automatically into that bot's log on the
+        <a href="/client">Client</a> page.
+      </p>
+      <h3><code>api.on(event, handler)</code> / <code>api.off(event, handler)</code></h3>
+      <p>
+        <code>bot.on(...)</code> doesn't work from inside the sandbox (listener functions can't cross into a
+        worker thread) - subscribe to bot events this way instead, e.g.
+        <code>api.on('health', () => { ... })</code>. Supports the same event names the rest of this app
+        listens for: <code>spawn</code>, <code>health</code>, <code>chat</code>, <code>death</code>,
+        <code>windowOpen</code>, and more.
+      </p>
+      <p>
+        Two notes on <code>chat</code> if you are building a module people type commands at. The bot's own
+        outgoing chat never comes back as an event, and a line starting with <code>/</code> is a server command
+        rather than public chat - so a command typed in game reaches you through <code>whisper</code>, not
+        <code>chat</code>. Whatever is typed into the chat box on the bot's page <em>is</em> delivered to loaded
+        modules, as a <code>chat</code> event whose username is <code>@panel</code> (not a legal Minecraft name,
+        so it can never be a real player). If that line matches a command your module declared, it stops there;
+        anything else is passed on to the server as usual.
+      </p>
+      <h3>Imports</h3>
+      <p>
+        <code>require()</code>/<code>import</code> inside a module (and anything it requires transitively) is
+        checked against an admin-controlled allowlist of Node builtins and npm package names - managed from the
+        <a href="/admin">Admin</a> page. Requiring your own module's other local files by relative path
+        (<code>require('./helper')</code>) always works and isn't checked.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Review &amp; publishing flow</h2>
+      <ol>
+        <li>Upload your <code>.js</code> file on the <a href="/marketplace">Marketplace</a> page with a name, description, and price in credits.</li>
+        <li>It sits in <strong>pending</strong> status - nobody can buy or load it yet, including you on other accounts.</li>
+        <li>An admin reads the source and approves or rejects it.</li>
+        <li>Once approved, any user can buy it (or you can load your own for free) from the <a href="/client">Client</a> page on any bot that's currently online.</li>
+      </ol>
+    </div>
+  </main>
+  <script src="/js/nav.js"></script>
+</body>
+</html>

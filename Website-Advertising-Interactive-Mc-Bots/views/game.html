@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>3D viewer - Mineflayer Web</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235ad67d'/%3E%3Crect x='18' y='7' width='8' height='8' rx='2' fill='%230a1a0f' opacity='.55'/%3E%3C/svg%3E" />
+  <!-- Same design tokens as the rest of the site; style.css below is built
+       entirely from them so the viewer chrome matches the panel UI. -->
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div id="game">
+    <iframe id="viewer-frame" title="3D view" allow="fullscreen"></iframe>
+
+    <div id="capture-layer"></div>
+
+    <div id="topbar">
+      <div id="active-bot-info">
+        <span id="active-bot-name">No bot selected</span>
+        <span id="active-bot-status" class="status-badge offline">offline</span>
+      </div>
+      <div id="topbar-actions">
+        <a href="/hub" id="btn-panel">Home</a>
+        <a href="/client" id="btn-bots-page">Client</a>
+        <span id="current-username"></span>
+        <button id="btn-logout">Log out</button>
+      </div>
+    </div>
+
+    <div id="site-banner" class="hidden"></div>
+
+    <div id="hud">
+      <div id="crosshair"></div>
+
+      <div id="click-hint">Click to look around and play. Press <kbd>Esc</kbd> to release the mouse.</div>
+      <div id="empty-state" class="hidden">
+        <p>No bot is being watched.</p>
+        <a href="/client" class="btn-link">Open the Client page</a>
+      </div>
+
+      <div id="status-banner"></div>
+
+      <div id="coords"></div>
+
+      <div id="bars">
+        <div id="health-bar" class="bar"></div>
+        <div id="food-bar" class="bar"></div>
+      </div>
+
+      <div id="hotbar"></div>
+
+      <div id="player-list" class="hidden"></div>
+
+      <div id="chat">
+        <div id="chat-log"></div>
+        <!-- Command completion for the chat box. Populated from whatever the
+             modules loaded on this connection declare they answer to; empty
+             (and hidden) when none of them declare anything. -->
+        <div id="chat-suggestions" class="chat-suggestions hidden"></div>
+        <input id="chat-input" type="text" maxlength="256" placeholder="Enter to chat, / for module commands" autocomplete="off" />
+      </div>
+
+      <div id="inventory-panel" class="hidden">
+        <div id="inventory-window">
+          <h2>Inventory</h2>
+          <div id="armor-row" class="slot-row"></div>
+          <div id="main-inventory" class="slot-grid"></div>
+          <div id="hotbar-inventory" class="slot-grid"></div>
+          <p class="hint">Click/shift-click/double-click/drag slots, or hover one and press 1-9 to hotbar-swap or Q to drop.</p>
+          <button id="close-inventory">Close (E)</button>
+        </div>
+      </div>
+
+      <div id="death-screen" class="hidden">
+        <h1>You Died</h1>
+        <button id="respawn-btn">Respawn</button>
+      </div>
+
+      <div id="container-panel" class="hidden">
+        <div id="container-window">
+          <h2 id="container-title">Container</h2>
+          <div id="container-grid" class="slot-grid"></div>
+          <p class="hint">Player inventory</p>
+          <div id="container-player-grid" class="slot-grid"></div>
+          <p class="hint">Click/shift-click/double-click/drag slots, or hover one and press 1-9 to hotbar-swap or Q to drop.</p>
+          <button id="close-container">Close (Esc)</button>
+        </div>
+      </div>
+
+      <div id="help">
+        <span>WASD move</span>
+        <span>Space jump</span>
+        <span>Shift sneak</span>
+        <span>Ctrl sprint</span>
+        <span>Click look/attack/mine</span>
+        <span>Right-click place/use/open container</span>
+        <span>1-9 hotbar</span>
+        <span>E inventory</span>
+        <span>Enter chat</span>
+        <span>Tab players</span>
+        <span>Q drop</span>
+      </div>
+
+      <div id="cursor-item" class="hidden"></div>
+      <div id="item-tooltip" class="hidden"></div>
+    </div>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/chatCommands.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+</html>

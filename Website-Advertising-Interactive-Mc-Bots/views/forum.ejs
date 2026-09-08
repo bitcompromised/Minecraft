@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <%- include('partials/head', { title: 'Forum' }) %>
+</head>
+<body data-role="<%= user.role %>" data-status="<%= user.status %>">
+  <%- include('partials/nav', { active: 'forum', user }) %>
+  <main class="panel-main">
+
+    <div class="page-header">
+      <span class="eyebrow">Community</span>
+      <h1>Forum</h1>
+      <p class="subtitle">Marketplace discussion, module reviews, general chat, and bug reports.</p>
+    </div>
+
+    <div class="search-bar" id="forum-sections">
+      <button type="button" class="btn small section-btn" data-section="marketplace">Marketplace</button>
+      <button type="button" class="btn small section-btn" data-section="reviews">Reviews</button>
+      <button type="button" class="btn small section-btn" data-section="discussion">Discussion</button>
+      <button type="button" class="btn small section-btn" data-section="bugs">Bugs/Errors</button>
+      <% if (roles.isModOrAdmin(user)) { %>
+      <button type="button" class="btn small section-btn" data-section="admin">Admin/Mod Discussion</button>
+      <% } %>
+    </div>
+
+    <p class="alert error hidden" id="forum-error"></p>
+
+    <div class="split">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <h2 id="section-title">Discussion</h2>
+          </div>
+          <div class="search-bar">
+            <input type="search" id="threads-search" placeholder="Search threads..." />
+            <select id="threads-sort">
+              <option value="activity">Recent activity</option>
+              <option value="newest">Newest</option>
+              <option value="views">Most views</option>
+              <option value="replies">Most replies</option>
+            </select>
+          </div>
+          <div class="data-list" id="thread-list"></div>
+          <div class="pager-bar" id="threads-pager"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>Start a thread</h2>
+          <p class="subtitle">Posts in the section selected above.</p>
+          <form id="new-thread-form" class="form-grid wide">
+            <label>Title<input name="title" required maxlength="120" /></label>
+            <label>Message<textarea name="body" required maxlength="5000" rows="6"></textarea></label>
+            <div><button class="btn primary" type="submit">Post thread</button></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="/js/nav.js"></script>
+  <script src="/js/forum-page.js"></script>
+</body>
+</html>

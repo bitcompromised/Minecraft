@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= siteName %> - Run Minecraft bots from your browser</title>
+  <meta name="description" content="Host, script, and watch Minecraft bots from a browser. Live 3D viewer, sandboxed module marketplace, proxy support, and a community forum." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%235ad67d'/%3E%3Crect x='18' y='7' width='8' height='8' rx='2' fill='%230a1a0f' opacity='.55'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/css/theme.css" />
+  <link rel="stylesheet" href="/css/landing.css" />
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="/">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span><%= siteName %></span>
+    </a>
+    <nav class="site-nav">
+      <a href="#features" class="nav-hide">Features</a>
+      <a href="#how" class="nav-hide">How it works</a>
+      <a href="#marketplace" class="nav-hide">Marketplace</a>
+      <a href="#faq" class="nav-hide">FAQ</a>
+      <a href="/login" class="btn">Log in</a>
+      <a href="/login#register" class="btn primary">Get started</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ==================== hero ==================== -->
+<section class="hero">
+  <div class="wrap">
+    <span class="pill">
+      <span class="tag">New</span>
+      Sandboxed modules, multi-server bots, and live chat control
+    </span>
+
+    <h1>Run Minecraft bots <span class="grad">from your browser</span></h1>
+
+    <p class="lede">
+      Spin up a bot on any server, watch it play in a real 3D viewer, talk through its chat, and
+      drop in community-built modules to automate the rest. No local setup, no terminal.
+    </p>
+
+    <div class="hero-cta">
+      <% if (registrationOpen) { %>
+      <a class="btn primary large" href="/login#register">Create an account</a>
+      <a class="btn large" href="/login">Log in</a>
+      <% } else { %>
+      <a class="btn primary large" href="/login">Log in</a>
+      <a class="btn large" href="#features">See what it does</a>
+      <% } %>
+    </div>
+
+    <p class="hero-note">
+      <% if (registrationOpen) { %>
+      Invite-only &mdash; you'll need a code from an existing member.
+      <% } else { %>
+      Registration is currently closed. Existing members can still sign in.
+      <% } %>
+    </p>
+
+    <!-- Stylised app frame: a static impression of the client page, drawn in
+         CSS so the landing page ships no image assets. -->
+    <div class="showcase" aria-hidden="true">
+      <div class="showcase-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="addr">/client</span>
+      </div>
+      <div class="showcase-body">
+        <div class="showcase-pane">
+          <h4>Running bots</h4>
+          <div class="mock-row">
+            <div>
+              <div class="name">miner_01</div>
+              <div class="sub">smp.example.net:25565 &middot; 2 modules</div>
+            </div>
+            <span class="spacer"></span>
+            <span class="mock-badge online">online</span>
+          </div>
+          <div class="mock-row">
+            <div>
+              <div class="name">scout_alpha</div>
+              <div class="sub">creative.example.net &middot; via socks5</div>
+            </div>
+            <span class="spacer"></span>
+            <span class="mock-badge idle">connecting</span>
+          </div>
+          <div class="mock-row">
+            <div>
+              <div class="name">farm_helper</div>
+              <div class="sub">No active connection</div>
+            </div>
+            <span class="spacer"></span>
+            <span class="mock-badge off">offline</span>
+          </div>
+        </div>
+        <div class="showcase-pane">
+          <h4>Live chat</h4>
+          <div class="mock-chat">
+            <div class="sys">&#8250; connected to smp.example.net</div>
+            <div><span class="u">&lt;Steve&gt;</span> anyone near spawn?</div>
+            <div><span class="me">&lt;miner_01&gt;</span> heading over now</div>
+            <div class="sys">&#8250; module "auto-eat" loaded</div>
+            <div><span class="u">&lt;Alex&gt;</span> nice bot</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== features ==================== -->
+<section class="section" id="features">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Features</span>
+      <h2>Everything a bot operator needs, in one panel</h2>
+      <p>Accounts, servers, proxies, automation, and the community that writes it &mdash; without stitching together five tools.</p>
+    </div>
+
+    <div class="feature-grid">
+      <article class="feature">
+        <div class="icon" aria-hidden="true">&#127918;</div>
+        <h3>Real 3D viewer</h3>
+        <p>Watch any running bot from inside the world. Move, look, mine, place, open containers, and manage its inventory with normal Minecraft controls.</p>
+      </article>
+
+      <article class="feature">
+        <div class="icon" aria-hidden="true">&#128172;</div>
+        <h3>Live chat, both ways</h3>
+        <p>Read a bot's server chat as it happens and send messages back from the client page &mdash; no need to load the 3D view just to talk.</p>
+      </article>
+
+      <article class="feature">
+        <div class="icon" aria-hidden="true">&#128268;</div>
+        <h3>Sandboxed modules</h3>
+        <p>Automation runs in its own worker thread with an admin-approved import allowlist, so a misbehaving module crashes itself instead of your bot.</p>
+      </article>
+
+      <article class="feature">
+        <div class="icon" aria-hidden="true">&#127760;</div>
+        <h3>Proxy support</h3>
+        <p>Route any connection through SOCKS5, SOCKS4, or HTTP CONNECT. Save proxies once and pick one each time you spawn a bot.</p>
+      </article>
+
+      <article class="feature">
+        <div class="icon" aria-hidden="true">&#128193;</div>
+        <h3>Multi-server profiles</h3>
+        <p>One account profile can run on several saved servers at once, each with its own status, logs, modules, and chat history.</p>
+      </article>
+
+      <article class="feature">
+        <div class="icon" aria-hidden="true">&#128220;</div>
+        <h3>Logs that explain things</h3>
+        <p>Per-connection lifecycle logs, filterable module errors, downloadable chat history, and a record of everyone the bot has seen online.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== how it works ==================== -->
+<section class="section" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">How it works</span>
+      <h2>From sign-in to a bot in the world</h2>
+      <p>Four steps, all from the browser.</p>
+    </div>
+
+    <div class="steps">
+      <article class="step">
+        <h3>Create a profile</h3>
+        <p>Save a Minecraft identity &mdash; Microsoft, Mojang, or offline &mdash; along with an optional version override.</p>
+      </article>
+      <article class="step">
+        <h3>Add a server</h3>
+        <p>Store the host, port, and version once. Add a proxy if the connection needs to come from somewhere else.</p>
+      </article>
+      <article class="step">
+        <h3>Spawn the bot</h3>
+        <p>Pick a profile, a server, and a proxy, then hit start. Each connection runs in its own isolated process.</p>
+      </article>
+      <article class="step">
+        <h3>Watch and automate</h3>
+        <p>Jump into the 3D viewer, chat from the panel, and load marketplace modules onto the live connection.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== marketplace ==================== -->
+<section class="section" id="marketplace">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Marketplace</span>
+      <h2>Automation the community actually wrote</h2>
+      <p>Buy modules with credits, publish your own, and get paid a share of every sale. Every upload is read by a human before it goes live.</p>
+    </div>
+
+    <div class="preview-grid">
+      <article class="preview-card">
+        <div class="top">
+          <h3>auto-eat</h3>
+          <span class="price">Free</span>
+        </div>
+        <p>Keeps the bot fed from whatever's in its inventory, prioritising the highest-saturation food it's carrying.</p>
+        <div class="foot">Sandboxed &middot; admin approved</div>
+      </article>
+
+      <article class="preview-card">
+        <div class="top">
+          <h3>vein-miner</h3>
+          <span class="price">25 credits</span>
+        </div>
+        <p>Pathfinds to a target ore, strips the whole vein, and returns to a drop-off chest when the inventory fills.</p>
+        <div class="foot">Sandboxed &middot; admin approved</div>
+      </article>
+
+      <article class="preview-card">
+        <div class="top">
+          <h3>chat-relay</h3>
+          <span class="price">10 credits</span>
+        </div>
+        <p>Mirrors server chat to a webhook and pipes replies back in, so a bot can bridge two places at once.</p>
+        <div class="foot">Sandboxed &middot; admin approved</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== safety strip ==================== -->
+<section class="section">
+  <div class="wrap">
+    <div class="stat-strip">
+      <div class="cell">
+        <div class="num">1</div>
+        <div class="cap">Process per connection</div>
+      </div>
+      <div class="cell">
+        <div class="num">&#8734;</div>
+        <div class="cap">Servers per profile</div>
+      </div>
+      <div class="cell">
+        <div class="num">3</div>
+        <div class="cap">Proxy protocols supported</div>
+      </div>
+      <div class="cell">
+        <div class="num">100%</div>
+        <div class="cap">Modules human-reviewed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== faq ==================== -->
+<section class="section" id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">FAQ</span>
+      <h2>Questions worth answering up front</h2>
+    </div>
+
+    <div class="faq-list">
+      <details open>
+        <summary>Do I need to install anything?</summary>
+        <p>No. Bots run on the server hosting this panel; you only ever need a browser. The 3D viewer streams from the same place.</p>
+      </details>
+      <details>
+        <summary>How do I get an account?</summary>
+        <p>Registration is invite-only. Every existing member has a limited invite quota and can generate a link for you from their settings page.</p>
+      </details>
+      <details>
+        <summary>Is my Minecraft account safe?</summary>
+        <p>Microsoft sign-in uses the standard device-code flow &mdash; you approve it on Microsoft's own site and this panel never sees your password. Offline and legacy auth are also supported.</p>
+      </details>
+      <details>
+        <summary>What can a marketplace module do?</summary>
+        <p>Modules run in a dedicated worker thread with no direct access to the bot object and only an admin-approved import allowlist. That gives real crash and memory isolation, but approval means a human read the source, not that the code is guaranteed safe. Only load modules from people you trust.</p>
+      </details>
+      <details>
+        <summary>Where do credits come from?</summary>
+        <p>Credits are granted by admins and earned by selling modules &mdash; uploaders receive a configurable share of every purchase of their work.</p>
+      </details>
+      <details>
+        <summary>Can one bot join several servers?</summary>
+        <p>Yes. A profile can hold connections to any number of saved servers simultaneously, each with independent status, modules, logs, and chat.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== cta ==================== -->
+<div class="wrap">
+  <section class="cta">
+    <h2>Ready to put a bot in the world?</h2>
+    <p>Sign in to reach the forum, the module marketplace, and your client panel.</p>
+    <div class="hero-cta">
+      <% if (registrationOpen) { %>
+      <a class="btn primary large" href="/login#register">Create an account</a>
+      <a class="btn large" href="/login">I already have one</a>
+      <% } else { %>
+      <a class="btn primary large" href="/login">Log in</a>
+      <% } %>
+    </div>
+  </section>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div>&copy; <%= new Date().getFullYear() %> <%= siteName %></div>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="#marketplace">Marketplace</a>
+      <a href="#faq">FAQ</a>
+      <a href="/login">Log in</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
