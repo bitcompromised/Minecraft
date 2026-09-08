@@ -1,0 +1,164 @@
+/* ==========================================================================
+   Design tokens + base element styles.
+
+   Loaded before every other stylesheet on the panel/landing/login pages
+   (the 3D viewer keeps its own standalone style.css and is untouched).
+   Everything downstream references these variables rather than raw hex, so
+   a palette change happens in exactly one place.
+   ========================================================================== */
+
+:root {
+  /* ---- surfaces, from furthest back to closest to the reader ---- */
+  --bg: #0a0d13;
+  --bg-grad: radial-gradient(1200px 600px at 50% -200px, #16202e 0%, #0a0d13 60%);
+  --surface: #10141d;
+  --surface-2: #161b26;
+  --surface-3: #1d2431;
+  --surface-hover: #212a39;
+
+  /* ---- lines ---- */
+  --border: rgba(255, 255, 255, 0.08);
+  --border-strong: rgba(255, 255, 255, 0.14);
+  --border-focus: rgba(90, 214, 125, 0.55);
+
+  /* ---- text ---- */
+  --text: #e8ecf3;
+  --text-muted: #9aa5b8;
+  --text-dim: #6c7789;
+
+  /* ---- brand + intent ---- */
+  --accent: #5ad67d;
+  --accent-hover: #6fe392;
+  --accent-dim: rgba(90, 214, 125, 0.12);
+  --accent-text: #0a1a0f;
+
+  --gold: #f5c451;
+  --gold-dim: rgba(245, 196, 81, 0.12);
+
+  --info: #60a5fa;
+  --info-dim: rgba(96, 165, 250, 0.12);
+
+  --warn: #fbbf24;
+  --warn-dim: rgba(251, 191, 36, 0.12);
+
+  --danger: #f87171;
+  --danger-dim: rgba(248, 113, 113, 0.12);
+
+  --link: #7fc4ff;
+  --link-hover: #a5d8ff;
+
+  /* ---- shape ---- */
+  --r-sm: 6px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 20px;
+  --r-pill: 999px;
+
+  /* ---- depth ---- */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 18px 48px rgba(0, 0, 0, 0.45);
+  --ring: 0 0 0 3px rgba(90, 214, 125, 0.18);
+
+  /* ---- type ---- */
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+
+  /* ---- rhythm ---- */
+  --nav-h: 60px;
+  --page-w: 1120px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: 650;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+p { margin: 0; }
+
+a {
+  color: var(--link);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+code, kbd, pre {
+  font-family: var(--font-mono);
+}
+
+code {
+  background: var(--surface-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 1px 5px;
+  font-size: 0.9em;
+}
+
+img { max-width: 100%; }
+
+button, input, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Scrollbars, so long log/chat panels don't look like a different product. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--surface-3) transparent;
+}
+
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+*::-webkit-scrollbar-thumb {
+  background: var(--surface-3);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: var(--r-pill);
+}
+
+*::-webkit-scrollbar-thumb:hover { background: var(--surface-hover); background-clip: padding-box; }
+
+.hidden { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
